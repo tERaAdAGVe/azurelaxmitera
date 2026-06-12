@@ -1,0 +1,20 @@
+{
+	"name": "externalFileFormat",
+	"properties": {
+		"folder": {
+			"name": "newyork_taxi"
+		},
+		"content": {
+			"query": "--external file format - parquet\nuse nyctaxi\nGO\n\nif not exists ( select 1 from sys.external_file_formats where name = 'fmt_parquet')\n    create external file format fmt_parqet\n        with (format_type = parquet,\n                data_compression = 'org.apache.hadoop.io.compress.SnappyCodec');\n\n--external file format - csv\n\nIf not exists(select 1 from sys.external_file_formats where name ='fmt_csv')\n    create external file format fmt_csv\n        with(format_type = DelimitedText,\n        format_options(\n            field_terminator = ',',\n            string_delimiter = '\" ',\n            first_row = 2,\n            use_type_default = false\n        ));\n\n--external file format delta\n\nif not exists (select 1 from sys.external_file_formats where name = 'fmt_deltaformat')\n    create external file format fmt_deltaformat\n        with(\n            format_type = delta);\n",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "nyctaxi",
+				"poolName": "Built-in"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}

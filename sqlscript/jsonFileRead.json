@@ -1,0 +1,17 @@
+{
+	"name": "jsonFileRead",
+	"properties": {
+		"content": {
+			"query": "--Read the nested CSV file structure\ndf = spark.read.option(\"header\", \"true\") \\\n               .csv(\"abfss://newyorkrawdata@synapseadlsrav1.dfs.core.windows.net/trip_data_green_csv/year=2020/month=*/*.csv\")\n\n--Limit records to prevent massive files, then select core columns to mock the project logic\ndf_subset = df.select(\"VendorID\", \"lpep_pickup_datetime\", \"passenger_count\", \"trip_distance\", \"total_amount\") \\\n              .limit(5000)\n\n--Coalesce to 1 file so it mirrors a single minified document (similar to Amazon_1-level_1-KB_minified.json)\ndf_subset.coalesce(1).write \\\n         .mode(\"overwrite\") \\\n         .json(\"abfss://newyorkrawdata@synapseadlsrav1.dfs.core.windows.net/trip_data_green_json/nyc_taxi_minified.json\")\n",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "bronze",
+				"poolName": "Built-in"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}

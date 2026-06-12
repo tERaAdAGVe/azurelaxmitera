@@ -1,0 +1,20 @@
+{
+	"name": "db_creation",
+	"properties": {
+		"folder": {
+			"name": "newyork_taxi"
+		},
+		"content": {
+			"query": "if not EXISTS(select 1 from sys.databases where name = 'nyctaxi')\n        create database nyctaxi;",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "master",
+				"poolName": "Built-in"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}

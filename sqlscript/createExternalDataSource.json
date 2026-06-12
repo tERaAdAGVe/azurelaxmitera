@@ -1,0 +1,20 @@
+{
+	"name": "createExternalDataSource",
+	"properties": {
+		"folder": {
+			"name": "newyork_taxi"
+		},
+		"content": {
+			"query": "--External data source\nuse nyctaxi\nGO\n\ncreate external data source nyctaxi_curated\n    WITH(\n        Location = 'https://synapseadlsrav1.dfs.core.windows.net/newyorktaxidata',\n        CREDENTIAL  = nyctaxi_msi\n    );",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "nyctaxi",
+				"poolName": "Built-in"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}

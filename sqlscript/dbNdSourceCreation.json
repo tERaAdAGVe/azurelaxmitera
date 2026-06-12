@@ -1,0 +1,20 @@
+{
+	"name": "dbNdSourceCreation",
+	"properties": {
+		"folder": {
+			"name": "newtaxi_project"
+		},
+		"content": {
+			"query": "--create database, masterkey, credential setup,data source & file format creation\n\n\n--Create Data base\ncreate database bronze;\ncreate database silver;\ncreate database gold;\nGO\n\n--- create database scoped credentail(managed identity)\n\nuse bronze;\nGO\ncreate master key encryption by PASSWORD = 'Adhira_06rajalakshmiIlango';\nGo\ncreate database scoped credential synapse_credential\n        with identity = 'managed identity';\nGO\n\nUse silver;\nGO\n\ncreate master key encryption by PASSWORD = 'Adhira_06rajalakshmiIlango';\nGo\n\ncreate database scoped credential synapse_credential\nwith identity = 'managed identity';\nGO\n\nUse gold;\nGO\n\ncreate master key encryption by PASSWORD = 'Adhira_06rajalakshmiIlango';\nGo\n\ncreate database scoped credential synapse_credential\nwith identity = 'managed identity';\nGO\nSELECT name, credential_identity\nFROM sys.database_scoped_credentials;\nGO\n\n--create external data sources\nuse bronze;\nGO\n\ncreate external data source bronze_source\nwith (\n    Location = 'https://synapseadlsrav1.dfs.core.windows.net/newyorkrawdata',\n    credential = synapse_credential\n);\nGo\n\nuse silver;\nGO\n\ncreate external data source silver_source\nwith (\n    Location = 'https://synapseadlsrav1.dfs.core.windows.net/newyorkrawdata',\n    credential = synapse_credential\n);\nGo\n\nuse gold;\nGO\nDROP EXTERNAL DATA SOURCE gold_source;\ncreate external data source gold_source\nwith (\n    Location = 'https://synapseadlsrav1.dfs.core.windows.net/newyorkrawdata',\n    credential = synapse_credential\n);\nGo\n\nselect * from sys.external_data_sources;\n\n--create file formats\n\nuse bronze;\nGO\n--Csv file format\ncreate external file format csv_format\n    with(\n        format_type = DELIMITEDTEXT,\n        format_options(\n            field_terminator = ',' ,\n            first_row = 2,\n            encoding = 'UTF8',\n            use_type_default = false\n        )\n    );\n    GO\nuse bronze;\ngo\nIF EXISTS (SELECT 1 FROM sys.external_file_formats WHERE name = 'parqet_format')\n    DROP EXTERNAL FILE FORMAT parqet_format;\n\nCREATE EXTERNAL FILE FORMAT parquet_format\nWITH (\n    FORMAT_TYPE      = PARQUET,\n    DATA_COMPRESSION = 'org.apache.hadoop.io.compress.SnappyCodec'\n);\nGO\n\n--delta format\n\ncreate external file format delta_format\nwith(\n    format_type = DELTA\n);\nGo\n\n-- verify setup\nselect name from sys.databases\nwhere name in('bronze','silver','gold');\n\nselect * from sys.external_file_formats;",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "bronze",
+				"poolName": "Built-in"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}

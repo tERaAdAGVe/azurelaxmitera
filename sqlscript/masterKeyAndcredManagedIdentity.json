@@ -1,0 +1,20 @@
+{
+	"name": "masterKeyAndcredManagedIdentity",
+	"properties": {
+		"folder": {
+			"name": "newyork_taxi"
+		},
+		"content": {
+			"query": "use nyctaxi\nGO\n\nIf not exists ( select  1 from sys.symmetric_keys where name = '##MS_DatabaseMasterKey##')\n    create master key ENCRYPTION by password = 'Adhira_06rajalakshmiIlango';\nGO\n\nif not EXISTS (select 1 from sys.database_credentials where name = 'nyctaxi_msi')\n        create database scoped CREDENTIAL nyctaxi_msi\n            with identity = 'Managed Identity';\nGo\n\nSELECT name, credential_identity FROM sys.database_credentials;\nSELECT name FROM sys.symmetric_keys;\n\nUSE nyctaxi;\nGO\n\n-- Force recreate the credential\nIF EXISTS (SELECT 1 FROM sys.database_credentials WHERE name = 'nyctaxi_msi')\n    DROP DATABASE SCOPED CREDENTIAL nyctaxi_msi;\nGO\n\nCREATE DATABASE SCOPED CREDENTIAL nyctaxi_msi\n    WITH IDENTITY = 'Managed Identity';\nGO\n\n-- Verify\nSELECT name, credential_identity FROM sys.database_credentials;\n\n",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "nyctaxi",
+				"poolName": "Built-in"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}

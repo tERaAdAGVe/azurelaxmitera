@@ -1,0 +1,17 @@
+{
+	"name": "jasonExternalTable",
+	"properties": {
+		"content": {
+			"query": "\nuse bronze;\ngo\ncreate external data source json_format \nwith(\n    location = 'adls-synapse01/json/US_STATE_recipes.json',\n    file_format = csv_format,\n)\n\n\n\nselect top 10*\nFROM OPENROWSET(\n    BULK 'adls-synapse01/json/US_STATE_recipes.json',\n    DATA_SOURCE = 'bronze_source',\n    FORMAT = 'CSV', -- Treated as a single-row CSV to ingest raw string data chunks\n    FIELDTERMINATOR = '0x0b', \n    ROWTERMINATOR = '0x0b',\n    FIELDQUOTE = '0x0b'\n) WITH (json_payload VARCHAR(MAX)) AS [file]\nCROSS APPLY OPENJSON([file].json_payload, '$.root') AS recipes;\nGO",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "bronze",
+				"poolName": "Built-in"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}
